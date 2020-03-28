@@ -13,14 +13,17 @@
     "apollo-client": "^2.6.8",
     "apollo-link": "^1.2.13",
     "apollo-link-rest": "^0.8.0-beta.0",
+    "bootstrap": "^4.4.1",
     "graphql": "^14.6.0",
     "graphql-anywhere": "^4.2.6",
     "graphql-tag": "^2.10.3",
     "lodash": "^4.17.15",
     "qs": "^6.9.3",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.0",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "react-table": "^7.0.0",
     "recharts": "^1.8.5"
   },
   "scripts": {

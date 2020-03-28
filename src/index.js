@@ -8,6 +8,7 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { RestLink } from 'apollo-link-rest';
 import {ApolloProvider} from '@apollo/react-hooks'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const restLink = new RestLink({ uri: "https://covidtracking.com/api/" });
 
