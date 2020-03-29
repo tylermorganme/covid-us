@@ -1,46 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { useQuery } from '@apollo/react-hooks'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 import _ from 'lodash'
 import { Container, Row, Col, Table } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
-import statePopulationData from './utils/statePopulationData'
-
-function padZero(str, len) {
-  len = len || 2;
-  var zeros = new Array(len).join('0');
-  return (zeros + str).slice(-len);
-}
-
-function invertColor(hex) {
-  if (hex.indexOf('#') === 0) {
-    hex = hex.slice(1);
-  }
-  // convert 3-digit hex to 6-digits.
-  if (hex.length === 3) {
-    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-  }
-  if (hex.length !== 6) {
-    throw new Error('Invalid HEX color.');
-  }
-  // invert color components
-  var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
-    g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
-    b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
-  // pad each with zeros and return
-  return '#' + padZero(r) + padZero(g) + padZero(b);
-}
-
-const constants = {
-  colors: {
-    fill1: "#8884d8",
-    fill2: "#82ca9d",
-    highlight1: invertColor("#8884d8"),
-    highlight2: invertColor("#82ca9d")
-  }
-}
-
+import { standardColors, highlightColors } from './constants'
 
 
 const TestChart = ({ data }) => {
@@ -60,26 +24,27 @@ const TestChart = ({ data }) => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar key="positive" onClick={onClick} dataKey="positive" stackId="a" fill={constants.colors.fill1}>
+        <Bar key="positive" onClick={onClick} dataKey="positive" stackId="a" fill={standardColors[0]}>
           {data.map((entry, index) => (
             <Cell
               key={entry.state}
               fill={
                 entry.state === activeState ?
-                  constants.colors.highlight1 :
-                  constants.colors.fill1
+                  highlightColors[0] :
+                  standardColors[0]
+
               }
             />
           ))}
         </Bar>
-        <Bar key="negative" onClick={onClick} dataKey="negative" stackId="a" fill={constants.colors.fill2}>
+        <Bar key="negative" onClick={onClick} dataKey="negative" stackId="a" fill={standardColors[1]}>
           {data.map((entry, index) => (
             <Cell
               key={entry.state}
               fill={
                 entry.state === activeState ?
-                  constants.colors.highlight2 :
-                  constants.colors.fill2
+                  highlightColors[1] :
+                  standardColors[1]
               }
             />
           ))}
@@ -108,26 +73,26 @@ const RateChart = ({ data }) => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar key="positiveRate" onClick={onClick} dataKey="positiveRate" stackId="a" fill={constants.colors.fill1}>
+        <Bar key="positiveRate" onClick={onClick} dataKey="positiveRate" stackId="a" fill={standardColors[0]}>
           {data.map((entry, index) => (
             <Cell
               key={entry.state}
               fill={
                 entry.state === activeState ?
-                  constants.colors.highlight1 :
-                  constants.colors.fill1
+                  highlightColors[0] :
+                  standardColors[0]
               }
             />
           ))}
         </Bar>
-        <Bar key="negativeRate" onClick={onClick} dataKey="negativeRate" stackId="a" fill={constants.colors.fill2}>
+        <Bar key="negativeRate" onClick={onClick} dataKey="negativeRate" stackId="a" fill={standardColors[1]}>
           {data.map((entry, index) => (
             <Cell
               key={entry.state}
               fill={
                 entry.state === activeState ?
-                  constants.colors.highlight2 :
-                  constants.colors.fill2
+                  highlightColors[1] :
+                  standardColors[1]
               }
             />
           ))}
@@ -155,14 +120,14 @@ const TestCoverageChart = ({ data }) => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar onClick={onClick} dataKey="testCoverage" stackId="a" fill={constants.colors.fill1}>
+        <Bar onClick={onClick} dataKey="testCoverage" stackId="a" fill={standardColors[0]}>
           {data.map((entry, index) => (
             <Cell
               key={entry.state}
               fill={
                 entry.state === activeState ?
-                  constants.colors.highlight1 :
-                  constants.colors.fill1
+                  highlightColors[0] :
+                  standardColors[0]
               }
             />
           ))}
@@ -174,7 +139,7 @@ const TestCoverageChart = ({ data }) => {
 }
 
 const App = () => {
-  const {loading, error, stateData } = useMainContext()
+  const { loading, error, stateData } = useMainContext()
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
