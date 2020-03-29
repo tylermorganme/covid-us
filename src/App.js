@@ -1,34 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 import _ from 'lodash'
 import { Container, Row, Col, Table } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import statePopulationData from './utils/statePopulationData'
-
-const GET_STATES = gql`
-  query luke {
-    state @rest(type: "State", path: "states") {
-      state,
-      positive,
-      positiveScore,
-      negative,
-      negativeScore,
-      negativeRegularScore,
-      commercialScore,
-      score,
-      grade,
-      totalTestResults,
-      hospitalized,
-      death,
-      dateModified,
-      dateChecked,
-      total
-    }
-  }
-`;
 
 function padZero(str, len) {
   len = len || 2;
@@ -64,7 +41,7 @@ const constants = {
   }
 }
 
-const territories = ['PR', 'AS', 'GU', 'MP', 'VI']
+
 
 const TestChart = ({ data }) => {
   const { setActiveState } = useMainContext()
@@ -197,37 +174,7 @@ const TestCoverageChart = ({ data }) => {
 }
 
 const App = () => {
-  const { loading, error, data } = useQuery(GET_STATES);
-  const [stateData, setStateData] = useState([])
-
-  console.log(statePopulationData)
-
-  useEffect(() => {
-    if (data) {
-      let modifiedData = data['state']
-        .filter(item => !territories.includes(item['state']))
-        .map((state) => {
-          // console.log(state)
-          const positiveRate = state['positive'] / state['totalTestResults']
-          const negativeRate = 1 - state['positive'] / state['totalTestResults']
-          const population = statePopulationData[state['state']]['population']
-          const density = statePopulationData[state['state']]['density']
-          const name = statePopulationData[state['state']]['name']
-          return {
-            ...state,
-            positiveRate,
-            negativeRate,
-            population,
-            density,
-            name,
-            testCoverage: state['totalTestResults']/population,
-            deathPerMillion: state['death']/(population/1000000)
-          }
-        });
-      setStateData(modifiedData)
-    }
-  }, [data])
-
+  const {loading, error, stateData } = useMainContext()
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
