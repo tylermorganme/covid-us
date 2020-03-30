@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 import _ from 'lodash'
@@ -6,135 +6,118 @@ import { Container, Row, Col, Table } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors, highlightColors } from './constants'
 
+const CustomizedAxisTick = ({ x, y, payload }) => {
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={4}
+        dx={0}
+        textAnchor="start"
+        fill="#666"
+        transform="rotate(90)"
+        fontFamily="Courier New"
+        fontSize="16px"
+      // fontWeight={1200}
+      >
+        {payload.value}
+      </text>
+    </g>
+  );
+}
 
-const TestChart = ({ data }) => {
-  const { setActiveState } = useMainContext()
+const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title }) => {
+  const { activeState, setActiveState } = useMainContext()
+
   const onClick = (data) => {
     setActiveState(data.state)
   }
 
-  const { activeState } = useMainContext()
+  const xDefaultTickFormatter = tick => (tick)
+
+  const chartData = _.sortBy(data, sortBy)
 
   return (
     <ResponsiveContainer width="100%" height={600}>
-      <BarChart data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <BarChart
+        data={chartData}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+      >
+        <Tooltip formatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="state" />
-        <YAxis />
+        <XAxis
+          dataKey="state"
+          interval={0}
+          tick={<CustomizedAxisTick />}
+        />
+        <YAxis tickFormatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
         <Tooltip />
         <Legend />
-        <Bar key="positive" onClick={onClick} dataKey="positive" stackId="a" fill={standardColors[0]}>
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.state}
-              fill={
-                entry.state === activeState ?
-                  highlightColors[0] :
-                  standardColors[0]
-
-              }
-            />
+        {seriesList.map((series, index) => (
+            <Bar key={series['key']} onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
+              {chartData.map(entry => (
+                <Cell
+                  key={entry.state}
+                  fill={
+                    entry.state === activeState ?
+                      highlightColors[index] :
+                      standardColors[index]
+                  }
+                />
+              ))}
+            </Bar>
           ))}
-        </Bar>
-        <Bar key="negative" onClick={onClick} dataKey="negative" stackId="a" fill={standardColors[1]}>
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.state}
-              fill={
-                entry.state === activeState ?
-                  highlightColors[1] :
-                  standardColors[1]
-              }
-            />
-          ))}
-        </Bar>
       </BarChart>
     </ResponsiveContainer >
   );
+}
 
+const TestChart = ({ data }) => {
+  const { stateData } = useMainContext()
+
+  return (
+    <StackedBarChart
+      data={stateData}
+      sortBy='totalTestResults'
+      seriesList={[
+        { key: 'positive', name: 'Positive' },
+        { key: 'negative', name: 'Negative' }
+      ]}
+      xTickFormatter={(tick) => `${tick.toLocaleString()}`}
+    />
+  )
 }
 
 const RateChart = ({ data }) => {
-  const { setActiveState } = useMainContext()
-  const { activeState } = useMainContext()
-
-  const onClick = (data) => {
-    setActiveState(data.state)
-  }
-
+  const { stateData } = useMainContext()
 
   return (
-    <ResponsiveContainer width="100%" height={600}>
-      <BarChart data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="state" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar key="positiveRate" onClick={onClick} dataKey="positiveRate" stackId="a" fill={standardColors[0]}>
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.state}
-              fill={
-                entry.state === activeState ?
-                  highlightColors[0] :
-                  standardColors[0]
-              }
-            />
-          ))}
-        </Bar>
-        <Bar key="negativeRate" onClick={onClick} dataKey="negativeRate" stackId="a" fill={standardColors[1]}>
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.state}
-              fill={
-                entry.state === activeState ?
-                  highlightColors[1] :
-                  standardColors[1]
-              }
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  );
-
+    <StackedBarChart
+      data={stateData}
+      sortBy='positiveRate'
+      seriesList={[
+        { key: 'positiveRate', name: 'Positive (%)' },
+        { key: 'negativeRate', name: 'Negative (%)' }
+      ]}
+      xTickFormatter={ tick => `${_.round(tick * 100, 1)}%`}
+    />
+  )
 }
 
-const TestCoverageChart = ({ data }) => {
-  const { setActiveState } = useMainContext()
-  const { activeState } = useMainContext()
-
-  const onClick = (data) => {
-    setActiveState(data.state)
-  }
+const TestCoverageChart = () => {
+  const { stateData } = useMainContext()
 
   return (
-    <ResponsiveContainer width="100%" height={600}>
-      <BarChart data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="state" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar onClick={onClick} dataKey="testCoverage" stackId="a" fill={standardColors[0]}>
-          {data.map((entry, index) => (
-            <Cell
-              key={entry.state}
-              fill={
-                entry.state === activeState ?
-                  highlightColors[0] :
-                  standardColors[0]
-              }
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  );
+    <StackedBarChart
+      data={stateData}
+      sortBy='populationTested'
+      seriesList={[
+        { key: 'populationTested', name: 'Tested (%)' },
+        { key: 'populationUntested', name: 'Untested (%)'}
+      ]}
+      xTickFormatter={(tick) => `${_.round(tick * 100, 1)}%`}
+    />
+  )
 
 }
 
@@ -148,23 +131,37 @@ const App = () => {
     <Container>
       <Row>
         <Col>
-          <TestChart
-            data={_.sortBy(stateData, 'totalTestResults')}
-          />
+          <h1>Number of Tests by Result</h1>
         </Col>
       </Row>
       <Row>
         <Col>
-          <RateChart
-            data={_.sortBy(stateData, 'positiveRate')}
-          />
+          <TestChart />
         </Col>
       </Row>
       <Row>
         <Col>
-          <TestCoverageChart
-            data={_.sortBy(stateData, 'testCoverage')}
-          />
+          <h1>Percent of Test By Outcome</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <RateChart />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <h1>Percent of Population Tested*</h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <TestCoverageChart />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <p><em>*This assumes that all tests were on unique individuals. It is likely that there are portions of the population that have been tested more than once (e.g. medical personnel) so the percentage of individuals tested may be lower.</em></p>
         </Col>
       </Row>
       <Row>

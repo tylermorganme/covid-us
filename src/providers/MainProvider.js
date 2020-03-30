@@ -45,6 +45,9 @@ export const MainProvider = ({children}) => {
           const population = statePopulationData[state['state']]['population']
           const density = statePopulationData[state['state']]['density']
           const name = statePopulationData[state['state']]['name']
+          const populationTested = state['totalTestResults']/population
+          const populationUntested = 1 - populationTested
+          const deathsPerMillion = state['death']/(population/1000000)
           return {
             ...state,
             positiveRate,
@@ -52,8 +55,9 @@ export const MainProvider = ({children}) => {
             population,
             density,
             name,
-            testCoverage: state['totalTestResults']/population,
-            deathPerMillion: state['death']/(population/1000000)
+            populationTested,
+            populationUntested,
+            deathsPerMillion
           }
         });
       setStateData(modifiedData)
