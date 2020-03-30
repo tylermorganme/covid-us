@@ -5,8 +5,10 @@ import _ from 'lodash'
 import { Container, Row, Col, Table } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors, highlightColors } from './constants'
+import { useWindowWidth } from '@react-hook/window-size/throttled'
 
 const CustomizedAxisTick = ({ x, y, payload }) => {
+  const windowWidth = useWindowWidth()
   return (
     <g transform={`translate(${x},${y})`}>
       <text
@@ -18,7 +20,8 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
         transform="rotate(90)"
         fontFamily="Courier New"
         fontSize="16px"
-      // fontWeight={1200}
+        // fontSize={`${Math.min(16, windowWidth/60)}px`}
+        fontSizeAdjust={(windowWidth/1600).toString()}
       >
         {payload.value}
       </text>
@@ -28,7 +31,7 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
 
 const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title }) => {
   const { activeState, setActiveState } = useMainContext()
-
+  const windowWidth = useWindowWidth()
   const onClick = (data) => {
     setActiveState(data.state)
   }
@@ -41,13 +44,13 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title }) =>
     <ResponsiveContainer width="100%" height={600}>
       <BarChart
         data={chartData}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        // margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <Tooltip formatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="state"
-          interval={0}
+          interval={ windowWidth > 890 ? 0 : 1 }
           tick={<CustomizedAxisTick />}
         />
         <YAxis tickFormatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
