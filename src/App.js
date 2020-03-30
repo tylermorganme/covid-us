@@ -127,7 +127,7 @@ const TestCoverageChart = () => {
 const App = () => {
   const { loading, error, stateData } = useMainContext()
 
-  if (loading) return <p>Loading...</p>;
+  // if (loading) return <p>Loading...</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
 
   return (
@@ -144,7 +144,7 @@ const App = () => {
       </Row>
       <Row>
         <Col>
-          <h1>Percent of Test By Outcome</h1>
+          <h1>Percent of Tests By Outcome</h1>
         </Col>
       </Row>
       <Row>
