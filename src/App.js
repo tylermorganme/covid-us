@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import './App.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
 import _ from 'lodash'
-import { Container, Row, Col, Table, Navbar, Jumbotron, Accordion, Card } from 'react-bootstrap';
+import { Container, Row, Col, Table, Navbar, Jumbotron, Accordion, Card, Button } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors, highlightColors } from './constants'
 import { useWindowWidth } from '@react-hook/window-size/throttled'
@@ -28,6 +28,12 @@ import {
   LinkedinIcon
 } from "react-share"
 
+import html2canvas from 'html2canvas'
+
+import format from 'date-fns/format'
+
+// import { svgAsPngUri } from 'save-svg-as-png'
+
 const CustomizedAxisTick = ({ x, y, payload }) => {
   const windowWidth = useWindowWidth()
   return (
@@ -50,7 +56,19 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
   );
 }
 
-const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title }) => {
+const ChartDate = () => {
+  var currentDate = new Date();
+
+  return (
+    <Row>
+      <Col>
+        <small className="text-muted">{`As of ${format(currentDate, "MM/dd/yyyy' @ 'HH:mm OOOO")} via covidstatsus.com`}</small>
+      </Col>
+    </Row>
+  )
+}
+
+const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, notes}) => {
   const { activeState, setActiveState } = useMainContext()
   const windowWidth = useWindowWidth()
   const onClick = (data) => {
@@ -62,37 +80,72 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title }) =>
   const chartData = _.sortBy(data, sortBy)
 
   return (
-    <ResponsiveContainer width="100%" height={Math.min(windowWidth, 600)}>
-      <BarChart
-        data={chartData}
-      // margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
-        <Tooltip formatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="state"
-          interval={windowWidth > 890 ? 0 : 1}
-          tick={<CustomizedAxisTick />}
-        />
-        <YAxis tickFormatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
-        <Tooltip />
-        <Legend />
-        {seriesList.map((series, index) => (
-          <Bar key={series['key']} onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
-            {chartData.map(entry => (
-              <Cell
-                key={entry.state}
-                fill={
-                  entry.state === activeState ?
-                    highlightColors[index] :
-                    standardColors[index]
-                }
-              />
+    <>
+      <div id={id}>
+        <Row>
+          <Col>
+            <h2>{`${title}${notes?"*":""}`}</h2>
+          </Col>
+        </Row>
+        <ChartDate />
+        <ResponsiveContainer width="100%" height={Math.min(windowWidth, 600)}>
+          <BarChart
+            data={chartData}
+          // margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <Tooltip formatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="state"
+              interval={windowWidth > 890 ? 0 : 1}
+              tick={<CustomizedAxisTick />}
+            />
+            <YAxis tickFormatter={xTickFormatter ? xTickFormatter : xDefaultTickFormatter} />
+            <Tooltip />
+            <Legend />
+            {seriesList.map((series, index) => (
+              <Bar key={series['key']} onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
+                {chartData.map(entry => (
+                  <Cell
+                    key={entry.state}
+                    fill={
+                      entry.state === activeState ?
+                        highlightColors[index] :
+                        standardColors[index]
+                    }
+                  />
+                ))}
+              </Bar>
             ))}
-          </Bar>
-        ))}
-      </BarChart>
-    </ResponsiveContainer >
+          </BarChart>
+        </ResponsiveContainer >
+        {
+          notes?
+          <Row>
+            <Col>
+              <p><em>{`*${notes}`}</em></p>
+            </Col>
+          </Row>:
+          null
+        }
+      </div>
+      <Button className='ml-auto d-block' variant="outline-dark" onClick={() => {
+        const element =document.querySelector(`#${id}`)
+        const link = document.createElement('a');
+        const currentScroll = document.documentElement.scrollTop
+        window.scrollTo(0,0); 
+        html2canvas(element).then(canvas => {
+          const dataURL = canvas.toDataURL()
+          console.log(dataURL)
+          link.download = `${id}.png`
+          link.href = dataURL
+          console.log(dataURL)
+          link.click()
+        }).then(()=>window.scrollTo(0,currentScroll)) 
+      }}>
+        Download
+      </Button>
+    </>
   );
 }
 
@@ -101,6 +154,8 @@ const TestChart = ({ data }) => {
 
   return (
     <StackedBarChart
+      id="testChart"
+      title='Number of Tests by Result'
       data={stateData}
       sortBy='totalTestResults'
       seriesList={[
@@ -117,6 +172,8 @@ const RateChart = ({ data }) => {
 
   return (
     <StackedBarChart
+      id='rateChart'
+      title='Percent of Tests By Outcome'
       data={stateData}
       sortBy='positiveRate'
       seriesList={[
@@ -133,6 +190,8 @@ const TestCoverageChart = () => {
 
   return (
     <StackedBarChart
+      id='testCoverageChart'
+      title='Percent of Population Tested'
       data={stateData}
       sortBy='populationTested'
       seriesList={[
@@ -140,6 +199,7 @@ const TestCoverageChart = () => {
         { key: 'populationUntested', name: 'Untested (%)' }
       ]}
       xTickFormatter={(tick) => `${_.round(tick * 100, 1)}%`}
+      notes="This assumes that all tests were on unique individuals. It is likely that there are portions of the population that have been tested more than once (e.g. medical personnel) so the percentage of individuals tested may be lower."
     />
   )
 
@@ -149,40 +209,23 @@ const DataAccordion = () => {
   const { stateData } = useMainContext()
 
   return (
-
     <Accordion>
       {stateData.map((state, index) => (
-        <Card>
+        <Card key={stateData['name']}>
           <Accordion.Toggle className="data-accordion-header" as={Card.Header} eventKey={index.toString()}>
-            {state.name}
+            {state['name']}
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={index.toString()}>
             <Card.Body>
               <ul>
                 {Object.entries(state).map(([key, value], index) => (
-                  ['name', '__typename'].includes(key) ? null : <li>{`${key}: ${value}`}</li>
+                  ['name', '__typename'].includes(key) ? null : <li key={key}>{`${key}: ${value}`}</li>
                 ))}
               </ul>
             </Card.Body>
           </Accordion.Collapse>
         </Card>
       ))}
-      {/* <Card>
-      <Accordion.Toggle as={Card.Header} eventKey="0">
-        Click me!
-      </Accordion.Toggle>
-      <Accordion.Collapse eventKey="0">
-        <Card.Body>Hello! I'm the body</Card.Body>
-      </Accordion.Collapse>
-    </Card>
-    <Card>
-      <Accordion.Toggle as={Card.Header} eventKey="1">
-        Click me!
-      </Accordion.Toggle>
-      <Accordion.Collapse eventKey="1">
-        <Card.Body>Hello! I'm another body</Card.Body>
-      </Accordion.Collapse>
-    </Card> */}
     </Accordion>
   )
 }
@@ -261,56 +304,10 @@ const DataTable = () => {
   columns = columns.map(column => ({ ...column, headerClasses: 'sticky' }))
 
   return (
-    <Row>
+    <Row style={{marginTop: '15px'}}>
       <Col>
-        <BootstrapTable keyField='id' data={stateData} columns={columns} />
+        <BootstrapTable keyField='name' data={stateData} columns={columns} />
         <Table striped bordered responsive >
-          {/* <thead >
-            <tr>
-              <th>Name</th>
-              <th>State</th>
-              <th>Positive</th>
-              <th>Negative</th>
-              <th>Negative Score</th>
-              <th>Negative Regular Score</th>
-              <th>Commercial Score</th>
-              <th>Score</th>
-              <th>Grade</th>
-              <th>Total Test Results</th>
-              <th>Hospitalized</th>
-              <th>Death</th>
-              <th>Population</th>
-              <th>Density</th>
-              <th>Date Modified</th>
-              <th>Date Checked</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              stateData.map((state) => {
-                return (
-                  <tr key={state['state']}>
-                    <td>{state['name']}</td>
-                    <td>{state['state']}</td>
-                    <td>{state['positive']}</td>
-                    <td>{state['negative']}</td>
-                    <td>{state['negativeScore']}</td>
-                    <td>{state['negativeRegularScore']}</td>
-                    <td>{state['commercialScore']}</td>
-                    <td>{state['score']}</td>
-                    <td>{state['grade']}</td>
-                    <td>{state['totalTestResults']}</td>
-                    <td>{state['hospitalized']}</td>
-                    <td>{state['death']}</td>
-                    <td>{state['population']}</td>
-                    <td>{state['density']}</td>
-                    <td>{state['dateModified']}</td>
-                    <td>{state['dateChecked']}</td>
-                  </tr>
-                )
-              })
-            }
-          </tbody> */}
         </Table>
       </Col>
     </Row>
@@ -318,7 +315,8 @@ const DataTable = () => {
 }
 
 const SocialSharingLinks = () => {
-  const summaryText = "Quickly compare COVID-19 across the Unites States."
+  const summaryText = "COVID Stats U.S. - Trusted COVID-19 Data"
+  const description = "Quickly compare COVID-19 metrics across the Unites States using official state reported data."
 
   // if (isBrowser()) { url = window.location.href; }
   let url = 'https://covidstatsus.com'
@@ -366,12 +364,11 @@ const SocialSharingLinks = () => {
         </LinkedinShareButton>
       </Col>
     </Row>
-
   )
 }
 
 const App = () => {
-  const { loading, error, stateData } = useMainContext()
+  const { error } = useMainContext()
   const windowWidth = useWindowWidth()
 
   // if (loading) return <p>Loading...</p>;
@@ -392,28 +389,18 @@ const App = () => {
         <Container>
           <Jumbotron>
             <Container >
-              <p class="lead"><strong>Welcome to COVID Stats U.S.</strong></p>
-              <p class="lead"> This project started out as my own attempt to understand what the COVID situation looked like in the U.S. and rapidly grew into a tool that I hope you will find useful. This is a work in progress so stay-tuned for updates.</p>
-              <p class="lead">The majority of the data is provided by the hard work of the folks at <a href="http://www.covidtracking.com/">covidtracking.com</a>.</p>
-              <p class="lead">Clicking on the data for any state will highlight that state in all graphs.</p>
-              <p class="lead">If you have questions or comments <a href="https://twitter.com/TylerMorganMe"> feel free to reach out</a>.</p>
-              <p class="lead">Enjoy and please share!</p>
+              <p className="lead"><strong>Welcome to COVID Stats U.S.</strong></p>
+              <p className="lead"> This project started out as my own attempt to understand what the COVID situation looked like in the U.S. and rapidly grew into a tool that I hope you will find useful. This is a work in progress so stay-tuned for updates.</p>
+              <p className="lead">The majority of the data is provided by the hard work of the folks at <a href="http://www.covidtracking.com/">covidtracking.com</a>.</p>
+              <p className="lead">Clicking on the data for any state will highlight that state in all graphs.</p>
+              <p className="lead">If you have questions or comments <a href="https://twitter.com/TylerMorganMe"> feel free to reach out</a>.</p>
+              <p className="lead">Enjoy and please share!</p>
               <SocialSharingLinks />
             </Container>
           </Jumbotron>
           <Row>
             <Col>
-              <h2>Number of Tests by Result</h2>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
               <TestChart />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <h2>Percent of Tests By Outcome</h2>
             </Col>
           </Row>
           <Row>
@@ -423,17 +410,7 @@ const App = () => {
           </Row>
           <Row>
             <Col>
-              <h2>Percent of Population Tested*</h2>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
               <TestCoverageChart />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p><em>*This assumes that all tests were on unique individuals. It is likely that there are portions of the population that have been tested more than once (e.g. medical personnel) so the percentage of individuals tested may be lower.</em></p>
             </Col>
           </Row>
         </Container>

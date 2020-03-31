@@ -14,18 +14,22 @@
     "apollo-link": "^1.2.13",
     "apollo-link-rest": "^0.8.0-beta.0",
     "bootstrap": "^4.4.1",
+    "date-fns": "^2.11.1",
     "graphql": "^14.6.0",
     "graphql-anywhere": "^4.2.6",
     "graphql-tag": "^2.10.3",
+    "html2canvas": "^1.0.0-rc.5",
     "lodash": "^4.17.15",
     "qs": "^6.9.3",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-bootstrap-table-next": "^4.0.0",
     "react-dom": "^16.13.1",
+    "react-helmet": "^5.2.1",
     "react-scripts": "3.4.1",
     "react-share": "^4.1.0",
-    "recharts": "^1.8.5"
+    "recharts": "^1.8.5",
+    "save-svg-as-png": "^1.4.17"
   },
   "scripts": {
     "start": "react-scripts start",
