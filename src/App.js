@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import './App.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
@@ -8,6 +8,7 @@ import { useMainContext } from './providers/MainProvider'
 import { standardColors, highlightColors } from './constants'
 import { useWindowWidth } from '@react-hook/window-size/throttled'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { Helmet } from 'react-helmet'
 
 import {
   EmailShareButton,
@@ -316,7 +317,7 @@ const DataTable = () => {
 
 const SocialSharingLinks = () => {
   const summaryText = "COVID Stats U.S. - Trusted COVID-19 Data"
-  const description = "Quickly compare COVID-19 metrics across the Unites States using official state reported data."
+  // const description = "Quickly compare COVID-19 metrics across the Unites States using official state reported data."
 
   // if (isBrowser()) { url = window.location.href; }
   let url = 'https://covidstatsus.com'
@@ -376,6 +377,11 @@ const App = () => {
 
   return (
     <>
+      <Helmet>
+          <title>My Title</title>
+          <meta property="og:image" content={`${window.location.href}rateChart.png`} />
+          <meta property="twitter:image" content={`${window.location.href}rateChart.png`}></meta>
+      </Helmet>
       <header>
         <Container fluid>
           <Navbar bg="dark" expand="lg">
