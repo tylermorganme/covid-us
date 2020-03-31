@@ -54,6 +54,12 @@ th, td {
   align-self: flex-start;
 }
 
+.card > .card-header {
+  background-color: #343a40;
+  color: white;
+}
+
+
 /* Social Sharing Links */
 
 .resp-sharing-button__link,
