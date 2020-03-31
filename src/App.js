@@ -153,7 +153,7 @@ const DataAccordion = () => {
     <Accordion>
       {stateData.map((state, index) => (
         <Card>
-          <Accordion.Toggle as={Card.Header} eventKey={index.toString()}>
+          <Accordion.Toggle className="data-accordion-header" as={Card.Header} eventKey={index.toString()}>
             {state.name}
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={index.toString()}>

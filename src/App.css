@@ -54,6 +54,16 @@ th, td {
   align-self: flex-start;
 }
 
+.card:nth-of-type(2n) > .card-header {
+  background-color: #343a40;
+  color: #00bbd6;
+}
+
+.card:nth-of-type(2n+1) > .card-header {
+  background-color: #343a40;
+  color: #ff706a;
+}
+
 /* Social Sharing Links */
 
 .resp-sharing-button__link,
