@@ -8,7 +8,6 @@ import { useMainContext } from './providers/MainProvider'
 import { standardColors, highlightColors } from './constants'
 import { useWindowWidth } from '@react-hook/window-size/throttled'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import { Helmet } from 'react-helmet'
 
 import {
   EmailShareButton,
@@ -377,11 +376,6 @@ const App = () => {
 
   return (
     <>
-      <Helmet>
-          <title>My Title</title>
-          <meta property="og:image" content={`${window.location.href}rateChart.png`} />
-          <meta property="twitter:image" content={`${window.location.href}rateChart.png`}></meta>
-      </Helmet>
       <header>
         <Container fluid>
           <Navbar bg="dark" expand="lg">
