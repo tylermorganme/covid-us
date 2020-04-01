@@ -74,12 +74,12 @@ let columns = [
 columns = columns.map(column => ({ ...column, headerClasses: 'sticky' }))
 
 const DataTable = () => {
-    const { stateData } = useMainContext()
+    const { activeDayStateData  } = useMainContext()
 
     return (
         <Row style={{ marginTop: '15px' }}>
             <Col>
-                <BootstrapTable keyField='name' data={stateData} columns={columns} />
+                <BootstrapTable keyField='name' data={activeDayStateData} columns={columns} />
                 <Table striped bordered responsive >
                 </Table>
             </Col>

@@ -3,13 +3,13 @@ import StackedBarChart from '../StackedBarChart'
 import { useMainContext } from '../../providers/MainProvider'
 
 const TestChart = ({ data }) => {
-    const { stateData } = useMainContext()
+    const { activeDayStateData  } = useMainContext()
   
     return (
       <StackedBarChart
         id="testChart"
         title='Number of Tests by Result'
-        data={stateData}
+        data={activeDayStateData }
         sortBy='totalTestResults'
         seriesList={[
           { key: 'positive', name: 'Positive' },

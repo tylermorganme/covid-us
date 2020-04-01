@@ -9,7 +9,6 @@ import html2canvas from 'html2canvas'
 import format from 'date-fns/format'
 
 const CustomizedAxisTick = ({ x, y, payload }) => {
-    const windowWidth = useWindowWidth()
     return (
         <g transform={`translate(${x},${y})`}>
             <text

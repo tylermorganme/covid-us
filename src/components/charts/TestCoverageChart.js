@@ -4,13 +4,13 @@ import { useMainContext } from '../../providers/MainProvider'
 import _ from 'lodash'
 
 const TestCoverageChart = () => {
-    const { stateData } = useMainContext()
+    const { activeDayStateData  } = useMainContext()
   
     return (
       <StackedBarChart
         id='testCoverageChart'
         title='Percent of Population Tested'
-        data={stateData}
+        data={activeDayStateData }
         sortBy='populationTested'
         seriesList={[
           { key: 'populationTested', name: 'Tested (%)' },

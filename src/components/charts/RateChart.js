@@ -4,13 +4,13 @@ import { useMainContext } from '../../providers/MainProvider'
 import _ from 'lodash'
 
 const RateChart = ({ data }) => {
-    const { stateData } = useMainContext()
+    const { activeDayStateData  } = useMainContext()
   
     return (
       <StackedBarChart
         id='rateChart'
         title='Percent of Tests By Outcome'
-        data={stateData}
+        data={activeDayStateData }
         sortBy='positiveRate'
         seriesList={[
           { key: 'positiveRate', name: 'Positive (%)' },

@@ -3,11 +3,11 @@ import {Accordion, Card} from 'react-bootstrap'
 import {useMainContext} from '../providers/MainProvider'
 
 const DataAccordion = () => {
-    const { stateData } = useMainContext()
+    const { activeDayStateData } = useMainContext()
   
     return (
       <Accordion>
-        {stateData.map((state, index) => (
+        {activeDayStateData .map((state, index) => (
           <Card key={state['name']}>
             <Accordion.Toggle className="data-accordion-header" as={Card.Header} eventKey={index.toString()}>
               {state['name']}
