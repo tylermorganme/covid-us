@@ -19,7 +19,7 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
                 textAnchor="start"
                 fill="#666"
                 transform="rotate(90)"
-                fontFamily="Courier New"
+                fontFamily="Courier New, monospace"
                 fontSize="16px"
             >
                 {payload.value}
@@ -87,24 +87,28 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
         setActiveState(data.state)
     }
     const xDefaultTickFormatter = tick => (tick)
-    const chartData = _.sortBy(data, sortBy)
     const formatter = xTickFormatter ? xTickFormatter : xDefaultTickFormatter
-    const height = Math.min(windowWidth, 600)
+    const horizontalHeight = Math.min(windowWidth, 600)
+    const verticalHeight = 800
+
+    const widthCutoff = 890
+    const isWide = windowWidth > widthCutoff
+    const chartData = isWide ? _.sortBy(data, sortBy) :_.sortBy(data, sortBy).reverse()
     return (
         <>
             <div id={id}>
                 <Title title={title} notes={notes} />
                 <ChartDate />
-                <ResponsiveContainer width="100%" height={height}>
-                    <BarChart data={chartData}>
+                <ResponsiveContainer width="100%" height={isWide ? horizontalHeight : verticalHeight}>
+                    <BarChart layout={isWide ? "horizontal": "vertical"} data={chartData}>
                         <Tooltip formatter={formatter} />
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis
-                            dataKey="state"
-                            interval={windowWidth > 890 ? 0 : 1}
-                            tick={<CustomizedAxisTick />}
-                        />
-                        <YAxis tickFormatter={formatter} />
+                        {isWide ?
+                        <XAxis dataKey="state"interval={0} tick={<CustomizedAxisTick />} />:
+                        <YAxis dataKey="state"interval={0} type="category"/>}
+                        {isWide ?
+                        <YAxis tickFormatter={formatter} />:
+                        <XAxis tickFormatter={formatter} type="number"/>}
                         <Tooltip />
                         <Legend />
                         {seriesList.map((series, index) => (

@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
-import _ from 'lodash'
-import { Container, Row, Col, Navbar, Jumbotron} from 'react-bootstrap';
+import { Container, Navbar, Jumbotron} from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors} from './constants'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
