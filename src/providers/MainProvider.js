@@ -32,7 +32,7 @@ export const useMainContext = () => useContext(MainContext);
 export const MainProvider = ({children}) => {
   const [activeState, setActiveState] = useState(null);
   const { data, loading, error } = useQuery(GET_STATES);
-  const [ stateData, setStateData ] = useState([])
+  const [ activeDayStateData , setActiveDayStateData ] = useState([])
 
   useEffect(() => {
     if (data) {
@@ -60,7 +60,7 @@ export const MainProvider = ({children}) => {
             deathsPerMillion
           }
         });
-      setStateData(modifiedData)
+      setActiveDayStateData(modifiedData)
     }
   }, [data])
 
@@ -72,8 +72,8 @@ export const MainProvider = ({children}) => {
           data,
           loading,
           error,
-          stateData,
-          setStateData
+          activeDayStateData,
+          setActiveDayStateData
       }}
     >
       {children}
