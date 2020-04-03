@@ -37,13 +37,14 @@ const Header = () => {
 }
 
 const App = () => {
-  const { totalsError, dailyError } = useMainContext()
+  const { totalsError, statesInfoError, dailyDataError } = useMainContext()
   // if (loading) return <p>Loading...</p>;
-  if (totalsError || dailyError) {
+  if (totalsError || dailyDataError || dailyDataError) {
     return (
       <>
         <p>{JSON.stringify(totalsError)}</p>
-        <p>{JSON.stringify(dailyError)}</p>
+        <p>{JSON.stringify(statesInfoError)}</p>
+        <p>{JSON.stringify(dailyDataError)}</p>
       </>
     )
   };

@@ -1,11 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import statePopulationData from '../utils/statePopulationData'
-import minBy from 'lodash/minBy'
-import maxBy from 'lodash/maxBy'
-import find from 'lodash/find'
-import Slider from '@material-ui/core/Slider';
+import omit from 'lodash/omit'
 
 const territories = ['PR', 'AS', 'GU', 'MP', 'VI']
+
 export const MainContext = React.createContext();
 export const useMainContext = () => useContext(MainContext);
 export const MainProvider = ({ children }) => {
@@ -29,12 +27,16 @@ export const MainProvider = ({ children }) => {
   const [dates, setDates] = useState(null)
 
   // Dates
-  const [ minDate, setMinDate] = useState(null)
-  const [ maxDate, setMaxDate] = useState(null)
   const [ activeDate, setActiveDate ] = useState(null)
 
   // This is the data we create charts from
   const [activeDayStateData, setActiveDayStateData] = useState([])
+
+  // Create Daily Snapshots
+  const [ snapshots, setSnapshots ] = useState([])
+
+  // Playback Controls
+  const [ isPlaying, setIsPlaying ] = useState(false)
 
   const setActiveDateByIndex = (index) => {
     setActiveDate(dates[index])
@@ -73,7 +75,7 @@ export const MainProvider = ({ children }) => {
           const populationTested = record['totalTestResults'] / population
           const populationUntested = 1 - populationTested
           const deathsPerMillion = record['death'] / (population / 1000000)
-          const totalResultsPlusPending = record['totalTestResults'] + record['pending']
+          const totalResultsPlusPending = record['totalTestResults'] + (record['pending'] || 0)
           return {
             ...record,
             positiveRate,
@@ -89,19 +91,23 @@ export const MainProvider = ({ children }) => {
         })
       })
       .then(augmentedData => {
-        //Get the min and max date
-        const minDate = minBy(augmentedData, 'date')['date']
-        const maxDate = maxBy(augmentedData, 'date')['date']
-        setMinDate(minDate)
-        setMaxDate(maxDate)
+        const accumulator = {}
+        //Create Snapshots
+        augmentedData.forEach( record =>{
+          const recordDate = record['date']
+          accumulator[recordDate] ?
+          accumulator[recordDate].push(omit(record, ['date'])) :
+          accumulator[recordDate] = [omit(record, ['date'])]
+        })
 
-        // We create a set to remove duplicates then covert back to an array for sorting.
-        setDates(Array.from(new Set(augmentedData.map( record => {
-          return record['date']
-        }))).sort())
+        setSnapshots(accumulator)
+
+        // Dates
+        const dateValues = Object.keys(accumulator).sort()
+        setDates(Object.keys(accumulator).sort())
 
         // Set the default date as the currentDate
-        setActiveDate(maxDate)
+        setActiveDate(dateValues[dateValues.length -1])
         setDailyData(augmentedData)
         setDailyDataLoading(false)
       })
@@ -111,6 +117,8 @@ export const MainProvider = ({ children }) => {
         setDailyDataLoading(false)
       })
   }, [])
+
+
 
   // This effect handles pulling everything in state info.=
   useEffect(() => {
@@ -132,20 +140,10 @@ export const MainProvider = ({ children }) => {
   // Set the activate days data based on activate date
   useEffect(()=> {
     // Check to make sure all the data has been loaded before compiling.
-    if (activeDate && totals && statesInfo && dailyData) {
-      const data = totals.filter(state => !territories.includes(state['state'])).map( state => {
-        const stateName = state['state']
-        const stateInfo = find(statesInfo, {state: stateName})
-        const stateDaily = find(dailyData, {state: stateName, date: activeDate})
-        return {
-          ...state,
-          ...stateInfo,
-          ...stateDaily
-        }
-      })
-      setActiveDayStateData(data)
+    if (activeDate && snapshots) {
+      setActiveDayStateData(snapshots[activeDate])
     }
-  }, [activeDate, totals, statesInfo, dailyData])
+  }, [activeDate, snapshots])
 
   return (
     <MainContext.Provider
@@ -169,12 +167,12 @@ export const MainProvider = ({ children }) => {
         setStatesInfoError,
         statesInfo,
         setStatesInfo,
-        minDate,
-        maxDate,
         dates,
         setActiveDateByIndex,
         activeDate,
-        setActiveDate
+        setActiveDate,
+        isPlaying,
+        setIsPlaying
       }}
     >
       {children}

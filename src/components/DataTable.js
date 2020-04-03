@@ -68,7 +68,16 @@ let columns = [
     {
         dataField: "dateChecked",
         text: "Date Checked"
+    },
+    {
+        dataField: 'totalResultsPlusPending',
+        text: 'Total Results Plus Pending'
+    },
+    {
+        dataField: 'pending',
+        text: 'Pending'
     }
+
 ]
 
 columns = columns.map(column => ({ ...column, headerClasses: 'sticky' }))
