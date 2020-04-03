@@ -73,6 +73,7 @@ export const MainProvider = ({ children }) => {
           const populationTested = record['totalTestResults'] / population
           const populationUntested = 1 - populationTested
           const deathsPerMillion = record['death'] / (population / 1000000)
+          const totalResultsPlusPending = record['totalTestResults'] + record['pending']
           return {
             ...record,
             positiveRate,
@@ -82,7 +83,8 @@ export const MainProvider = ({ children }) => {
             name,
             populationTested,
             populationUntested,
-            deathsPerMillion
+            deathsPerMillion,
+            totalResultsPlusPending
           }
         })
       })

@@ -11,7 +11,7 @@ const superCeil = (num) => {
 
 const TestChart = ({ data }) => {
     const { activeDayStateData, dailyData } = useMainContext()
-    const max = maxBy(dailyData, 'totalTestResults') && maxBy(dailyData, 'totalTestResults')['totalTestResults']
+    const max = maxBy(dailyData, 'totalResultsPlusPending') && maxBy(dailyData, 'totalResultsPlusPending')['totalResultsPlusPending']
     console.log(max)
     return (
       <StackedBarChart
@@ -21,7 +21,8 @@ const TestChart = ({ data }) => {
         sortBy='totalTestResults'
         seriesList={[
           { key: 'positive', name: 'Positive' },
-          { key: 'negative', name: 'Negative' }
+          { key: 'negative', name: 'Negative' },
+          { key: 'pending', name: 'Pending' }
         ]}
         xTickFormatter={(tick) => `${tick.toLocaleString()}`}
         max={superCeil(max)}
