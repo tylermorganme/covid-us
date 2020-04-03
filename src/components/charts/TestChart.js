@@ -1,10 +1,18 @@
 import React from 'react'
 import StackedBarChart from '../StackedBarChart'
 import { useMainContext } from '../../providers/MainProvider'
+import maxBy from 'lodash/maxBy'
+import ceil from 'lodash/ceil'
+
+const superCeil = (num) => {
+  const exponent = Math.floor(Math.log(num)/Math.log(10)) -1
+  return ceil(num, -exponent)
+}
 
 const TestChart = ({ data }) => {
-    const { activeDayStateData  } = useMainContext()
-  
+    const { activeDayStateData, dailyData } = useMainContext()
+    const max = maxBy(dailyData, 'totalResultsPlusPending') && maxBy(dailyData, 'totalResultsPlusPending')['totalResultsPlusPending']
+    console.log(max)
     return (
       <StackedBarChart
         id="testChart"
@@ -13,9 +21,11 @@ const TestChart = ({ data }) => {
         sortBy='totalTestResults'
         seriesList={[
           { key: 'positive', name: 'Positive' },
-          { key: 'negative', name: 'Negative' }
+          { key: 'negative', name: 'Negative' },
+          { key: 'pending', name: 'Pending' }
         ]}
         xTickFormatter={(tick) => `${tick.toLocaleString()}`}
+        max={superCeil(max)}
       />
     )
   }
