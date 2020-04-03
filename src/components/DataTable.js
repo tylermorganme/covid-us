@@ -21,18 +21,18 @@ let columns = [
         dataField: "negative",
         text: "Negative"
     },
-    {
-        dataField: "negativeScore",
-        text: "Negative Score"
-    },
-    {
-        dataField: "negativeRegularScore",
-        text: "Negative Regular Score"
-    },
-    {
-        dataField: "commercialScore",
-        text: "Commercial Score"
-    },
+    // {
+    //     dataField: "negativeScore",
+    //     text: "Negative Score"
+    // },
+    // {
+    //     dataField: "negativeRegularScore",
+    //     text: "Negative Regular Score"
+    // },
+    // {
+    //     dataField: "commercialScore",
+    //     text: "Commercial Score"
+    // },
     // { 
     //   dataField: "score",
     //   text: "Score"
@@ -76,6 +76,10 @@ let columns = [
     {
         dataField: 'pending',
         text: 'Pending'
+    },
+    {
+        dataField: 'positiveRate',
+        text: '% Positive'
     }
 
 ]

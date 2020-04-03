@@ -4,7 +4,6 @@ import { useMainContext } from '../providers/MainProvider'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 import { withStyles } from '@material-ui/core/styles';
-import { useWindowWidth } from '@react-hook/window-size/throttled'
 
 const baseDate = new Date()
 

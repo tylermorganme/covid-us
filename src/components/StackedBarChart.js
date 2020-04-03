@@ -1,7 +1,7 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, Label } from 'recharts'
 import _ from 'lodash'
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Container } from 'react-bootstrap';
 import { useMainContext } from '../providers/MainProvider'
 import { standardColors, highlightColors } from '../constants'
 import { useWindowWidth } from '@react-hook/window-size/throttled'
@@ -12,9 +12,10 @@ import DateSlider from './DateSlider'
 
 const baseDate = new Date()
 
-const CustomizedAxisTick = ({ x, y, payload }) => {
+const CustomizedAxisTick = (props) => {
+    const { x, y, payload } = props
     return (
-        <g transform={`translate(${x},${y})`}>
+        <g key={payload.value} transform={`translate(${x},${y})`}>
             <text
                 x={0}
                 y={4}
@@ -54,7 +55,7 @@ const ChartDate = () => {
             </Col>
         </Row>
     )
-  
+
 }
 
 const DownloadButton = ({ id }) => {
@@ -72,7 +73,7 @@ const DownloadButton = ({ id }) => {
                 link.click()
             }).then(() => window.scrollTo(0, currentScroll))
         }}>
-            Download
+            Download Chart
         </Button>
     )
 }
@@ -97,6 +98,25 @@ const Title = ({ title, notes }) => {
     )
 }
 
+const SliderArea = () => {
+    return (
+        <Container>
+            <Row>
+                <Col xs={'auto'}>
+                    <h2 className='lead'>Change the Date</h2>
+                </Col>
+                <Col xs={'auto'} className="d-none d-lg-block">
+                    <i className="cil-chevron-right" style={{fontSize:'30px'}} />
+                </Col>
+                <Col xs={12} lg={9}>
+                    <DateSlider />
+                </Col>
+            </Row>
+        </Container>
+    )
+}
+
+
 const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, notes, max }) => {
     const windowWidth = useWindowWidth()
     const { activeState, setActiveState } = useMainContext()
@@ -112,33 +132,34 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
 
     const widthCutoff = 890
     const isWide = windowWidth > widthCutoff
-    const chartData = isWide ? _.sortBy(data, sortBy) :_.sortBy(data, sortBy).reverse()
+    const chartData = isWide ? _.sortBy(data, sortBy) : _.sortBy(data, sortBy).reverse()
+
+    const setCellFill = (isHighlighted, index) => {
+        return isHighlighted ? highlightColors[index] : standardColors[index]
+    }
+
     return (
         <>
             <div id={id}>
                 <Title title={title} notes={notes} />
                 <ChartDate />
                 <ResponsiveContainer width="100%" height={isWide ? horizontalHeight : verticalHeight}>
-                    <BarChart layout={isWide ? "horizontal": "vertical"} data={chartData}>
+                    <BarChart layout={isWide ? "horizontal" : "vertical"} data={chartData}>
                         <Tooltip formatter={formatter} />
                         <CartesianGrid strokeDasharray="3 3" />
                         {isWide ?
-                        <XAxis dataKey="state"interval={0} tick={<CustomizedAxisTick />} />:
-                        <YAxis dataKey="state"interval={0} type="category"/>}
+                            <XAxis dataKey="state" interval={0} tick={<CustomizedAxisTick />} /> :
+                            <YAxis dataKey="state" interval={0} type="category" />}
                         {isWide ?
-                        <YAxis tickFormatter={formatter} domain={[0, max ? max : 'auto']}/>:
-                        <XAxis tickFormatter={formatter} type="number"/>}
+                            <YAxis tickFormatter={formatter} domain={[0, max ? max : 'auto']} /> :
+                            <XAxis tickFormatter={formatter} type="number" />}
                         <Tooltip />
                         <Legend />
                         {seriesList.map((series, index) => (
-                            <Bar key={series['key']}  onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
+                            <Bar key={series['key']} onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
                                 {chartData.map(entry => (
                                     <Cell key={entry.state}
-                                        fill={
-                                            entry.state === activeState ?
-                                                highlightColors[index] :
-                                                standardColors[index]
-                                        }
+                                        fill={setCellFill(entry.state === activeState, index)}
                                     />
                                 ))}
                             </Bar>
@@ -147,7 +168,7 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
                 </ResponsiveContainer >
                 {notes ? <Notes notes={notes} /> : null}
             </div>
-            <DateSlider />
+            <SliderArea />
             <DownloadButton id={id} />
         </>
     );

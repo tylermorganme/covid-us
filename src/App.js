@@ -3,7 +3,6 @@ import './App.css';
 import { Container, Navbar, Jumbotron } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors } from './constants'
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import SocialShareButtons from './components/SocialShareButtons'
 import ResponsiveDataViewer from './components/ResponsiveDataViewer'
 import Charts from './components/Charts'

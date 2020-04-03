@@ -67,15 +67,15 @@ export const MainProvider = ({ children }) => {
         return data.filter(state => !territories.includes(state['state'])).map( record => {
           const stateId = record['state']
           const popData = statePopulationData[stateId]
-          const positiveRate = record['positive'] / record['totalTestResults']
-          const negativeRate = 1 - record['positive'] / record['totalTestResults']
+          const positiveRate = ((record['positive'] || 0) / (record['totalTestResults'] || 0)) || 0
+          const negativeRate = 1 - (record['positive'] || 0) / (record['totalTestResults'] || 0)
           const population = popData['population']
           const density = popData['density']
           const name = popData['name']
-          const populationTested = record['totalTestResults'] / population
+          const populationTested = ((record['totalTestResults'] || 0) / population) || 0
           const populationUntested = 1 - populationTested
-          const deathsPerMillion = record['death'] / (population / 1000000)
-          const totalResultsPlusPending = record['totalTestResults'] + (record['pending'] || 0)
+          const deathsPerMillion = (record['death'] || 0) / (population / 1000000)
+          const totalResultsPlusPending = (record['totalTestResults'] || 0) + (record['pending'] || 0)
           return {
             ...record,
             positiveRate,
