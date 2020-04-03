@@ -10,8 +10,8 @@ export const standardColors = [
 ]
 
 export const highlightColors = [
-    rgbToHex(50, 50, 50),
+    rgbToHex(178, 210, 52),
     rgbToHex(100, 100, 100),
+    rgbToHex(255, 152, 84),
     rgbToHex(150, 150, 150),
-    rgbToHex(200, 200, 200) 
 ]
