@@ -4,6 +4,7 @@ import { useMainContext } from '../providers/MainProvider'
 import parse from 'date-fns/parse'
 import format from 'date-fns/format'
 import { withStyles } from '@material-ui/core/styles';
+import { useWindowWidth } from '@react-hook/window-size/throttled'
 
 const baseDate = new Date()
 
@@ -42,6 +43,22 @@ const StyledSlider = withStyles({
         borderRadius: 4,
     },
 })(Slider)
+
+const makeMarks = (dates, labelInterval) => {
+    const numDates = dates.length - 1 
+    return dates.map((value, index) => {
+        if (index === 0 || index === numDates || ((index % labelInterval === 0) && !(numDates - index < labelInterval))) {
+            return {
+                label: format(parse(value, 'yyyyMMdd', baseDate), 'M/d'),
+                value: index
+            }
+        } else {
+            return {
+                value: index
+            }
+        }
+    })
+}
 
 const DateSlider = () => {
     const [value, setValue] = React.useState(null);
@@ -82,8 +99,7 @@ const DateSlider = () => {
                 onChange={handleChange}
                 valueLabelDisplay="auto"
                 aria-labelledby="linear-slider"
-                // marks={dates ? dates.map((value, index) => ({ label: format(parse(value, 'yyyyMMdd', baseDate), 'M/d'), value: index})):null}
-                marks={dates ? dates.map((value, index) => ({ value: index})):null}
+                marks={dates ? makeMarks(dates, 4) : null}
             />
         </div>
     )
