@@ -12,13 +12,12 @@ const superCeil = (num) => {
 const TestChart = ({ data }) => {
     const { activeDayStateData, dailyData } = useMainContext()
     const max = maxBy(dailyData, 'totalResultsPlusPending') && maxBy(dailyData, 'totalResultsPlusPending')['totalResultsPlusPending']
-    console.log(max)
     return (
       <StackedBarChart
         id="testChart"
         title='Number of Tests by Result'
         data={activeDayStateData }
-        sortBy='totalTestResults'
+        sortBy='totalResultsPlusPending'
         seriesList={[
           { key: 'positive', name: 'Positive' },
           { key: 'negative', name: 'Negative' },
