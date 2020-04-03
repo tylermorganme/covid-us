@@ -7,6 +7,10 @@ import { standardColors, highlightColors } from '../constants'
 import { useWindowWidth } from '@react-hook/window-size/throttled'
 import html2canvas from 'html2canvas'
 import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import DateSlider from './DateSlider'
+
+const baseDate = new Date()
 
 const CustomizedAxisTick = ({ x, y, payload }) => {
     return (
@@ -29,14 +33,28 @@ const CustomizedAxisTick = ({ x, y, payload }) => {
 
 const ChartDate = () => {
     var currentDate = new Date();
+    const { activeDate, dates } = useMainContext()
+
+    if (!dates || !activeDate) { return null }
+
+    if (activeDate === dates[dates.length - 1]) {
+        return (
+            <Row>
+                <Col>
+                    <small className="text-muted">{`As of ${format(currentDate, "MM/dd/yyyy' @ 'HH:mm OOOO")} via covidstatsus.com`}</small>
+                </Col>
+            </Row>
+        )
+    }
 
     return (
         <Row>
             <Col>
-                <small className="text-muted">{`As of ${format(currentDate, "MM/dd/yyyy' @ 'HH:mm OOOO")} via covidstatsus.com`}</small>
+                <small className="text-muted">{`On ${format(parse(activeDate, 'yyyyMMdd', baseDate), 'M/d')} as of ${format(currentDate, "MM/dd/yyyy' @ 'HH:mm OOOO")} via covidstatsus.com`}</small>
             </Col>
         </Row>
     )
+  
 }
 
 const DownloadButton = ({ id }) => {
@@ -79,16 +97,18 @@ const Title = ({ title, notes }) => {
     )
 }
 
-const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, notes }) => {
+const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, notes, max }) => {
     const windowWidth = useWindowWidth()
     const { activeState, setActiveState } = useMainContext()
     const onClick = (data) => {
         setActiveState(data.state)
     }
+
     const xDefaultTickFormatter = tick => (tick)
     const formatter = xTickFormatter ? xTickFormatter : xDefaultTickFormatter
     const horizontalHeight = Math.min(windowWidth, 600)
     const verticalHeight = 800
+
 
     const widthCutoff = 890
     const isWide = windowWidth > widthCutoff
@@ -106,12 +126,12 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
                         <XAxis dataKey="state"interval={0} tick={<CustomizedAxisTick />} />:
                         <YAxis dataKey="state"interval={0} type="category"/>}
                         {isWide ?
-                        <YAxis tickFormatter={formatter} />:
+                        <YAxis tickFormatter={formatter} domain={[0, max ? max : 'auto']}/>:
                         <XAxis tickFormatter={formatter} type="number"/>}
                         <Tooltip />
                         <Legend />
                         {seriesList.map((series, index) => (
-                            <Bar key={series['key']} onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
+                            <Bar key={series['key']}  onClick={onClick} dataKey={series['key']} stackId="a" fill={standardColors[index]} name={series['name']}>
                                 {chartData.map(entry => (
                                     <Cell key={entry.state}
                                         fill={
@@ -127,6 +147,7 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
                 </ResponsiveContainer >
                 {notes ? <Notes notes={notes} /> : null}
             </div>
+            <DateSlider />
             <DownloadButton id={id} />
         </>
     );
