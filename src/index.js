@@ -3,28 +3,18 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { RestLink } from 'apollo-link-rest';
-import { ApolloProvider } from '@apollo/react-hooks'
+import '@coreui/icons/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MainProvider } from './providers/MainProvider'
-
-const restLink = new RestLink({ uri: "https://covidtracking.com/api/" });
-
-
-const client = new ApolloClient({
-  link: restLink,
-  cache: new InMemoryCache(),
-});
+import MainApolloProvider from './providers/MainApolloProvider'
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
+    <MainApolloProvider>
       <MainProvider>
         <App />
       </MainProvider>
-    </ApolloProvider>
+    </MainApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -21,18 +21,18 @@ let columns = [
         dataField: "negative",
         text: "Negative"
     },
-    {
-        dataField: "negativeScore",
-        text: "Negative Score"
-    },
-    {
-        dataField: "negativeRegularScore",
-        text: "Negative Regular Score"
-    },
-    {
-        dataField: "commercialScore",
-        text: "Commercial Score"
-    },
+    // {
+    //     dataField: "negativeScore",
+    //     text: "Negative Score"
+    // },
+    // {
+    //     dataField: "negativeRegularScore",
+    //     text: "Negative Regular Score"
+    // },
+    // {
+    //     dataField: "commercialScore",
+    //     text: "Commercial Score"
+    // },
     // { 
     //   dataField: "score",
     //   text: "Score"
@@ -68,7 +68,20 @@ let columns = [
     {
         dataField: "dateChecked",
         text: "Date Checked"
+    },
+    {
+        dataField: 'totalResultsPlusPending',
+        text: 'Total Results Plus Pending'
+    },
+    {
+        dataField: 'pending',
+        text: 'Pending'
+    },
+    {
+        dataField: 'positiveRate',
+        text: '% Positive'
     }
+
 ]
 
 columns = columns.map(column => ({ ...column, headerClasses: 'sticky' }))

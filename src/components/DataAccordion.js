@@ -7,7 +7,7 @@ const DataAccordion = () => {
   
     return (
       <Accordion>
-        {activeDayStateData .map((state, index) => (
+        {activeDayStateData.map((state, index) => (
           <Card key={state['name']}>
             <Accordion.Toggle className="data-accordion-header" as={Card.Header} eventKey={index.toString()}>
               {state['name']}
