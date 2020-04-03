@@ -17,7 +17,7 @@ const RateChart = ({ data }) => {
           { key: 'negativeRate', name: 'Negative (%)' }
         ]}
         xTickFormatter={tick => `${_.round(tick * 100, 1)}%`}
-        notes='If a state has a 100% positive rate on a given day, it is like caused by the state not reporting negatives up to that date.'
+        notes='States with 100% positive rates in the past were due to them not reporting negatives and limited testing (e.g. Hawaii had only reported 10 test as of 3/17 and all were positive).'
       />
     )
   }

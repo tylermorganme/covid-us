@@ -6,6 +6,7 @@ import { Row, Col, Container } from 'react-bootstrap'
 
 const Charts = () => {
     const charts = [TestChart, RateChart, TestCoverageChart]
+
     return (
         <Container>
             {

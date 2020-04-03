@@ -77,7 +77,7 @@ export const MainProvider = ({ children }) => {
           const population = popData['population']
           const density = popData['density']
           const name = popData['name']
-          const populationTested = ((record['totalTestResults'] || 0) / population) || 0
+          const populationTested = record['negative'] ? ((record['totalTestResults'] || 0) / population) || 0 : 0
           const populationUntested = 1 - populationTested
           const deathsPerMillion = (record['death'] || 0) / (population / 1000000)
           const totalResultsPlusPending = (record['totalTestResults'] || 0) + (record['pending'] || 0)
