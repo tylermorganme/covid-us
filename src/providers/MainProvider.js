@@ -4,6 +4,11 @@ import omit from 'lodash/omit'
 
 const territories = ['PR', 'AS', 'GU', 'MP', 'VI']
 
+const nodeEnv = process.env.NODE_ENV
+const proxy = nodeEnv === 'production' ? '' : process.env.REACT_APP_PROXY_URL
+const apiURL = 'https://covidtracking.com/api/'
+const domain = `${proxy}${apiURL}`
+
 export const MainContext = React.createContext();
 export const useMainContext = () => useContext(MainContext);
 export const MainProvider = ({ children }) => {
@@ -45,7 +50,7 @@ export const MainProvider = ({ children }) => {
   // This effect handles pulling in current totals.
   useEffect(() => {
     setTotalsLoading(true)
-    fetch('https://lychee-pudding-66431.herokuapp.com/https://covidtracking.com/api/states')
+    fetch(`${domain}states`)
       .then(resp => resp.json())
       .then((data) => {
         setTotals(data)
@@ -61,7 +66,7 @@ export const MainProvider = ({ children }) => {
   // This effect handles pulling in historica data.
   useEffect(() => {
     setDailyDataLoading(true)
-    fetch('https://lychee-pudding-66431.herokuapp.com/https://covidtracking.com/api/states/daily')
+    fetch(`${domain}states/daily`)
       .then(resp => resp.json())
       .then(data => {
         return data.filter(state => !territories.includes(state['state'])).map( record => {
@@ -123,7 +128,7 @@ export const MainProvider = ({ children }) => {
   // This effect handles pulling everything in state info.=
   useEffect(() => {
     setStatesInfoLoading(true)
-    fetch('https://lychee-pudding-66431.herokuapp.com/https://covidtracking.com/api/states/info')
+    fetch(`${domain}states/info`)
       .then(resp => resp.json())
       .then((data) => {
         setStatesInfo(data)
