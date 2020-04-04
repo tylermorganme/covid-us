@@ -66,6 +66,14 @@ th, td {
   color: white;
 }
 
+.slider-arrow-icon {
+  font-size: 30px
+}
+
+.social-button-column {
+  flex-grow: 0 !important;
+  padding-top: 15px;
+}
 
 /* Social Sharing Links */
 

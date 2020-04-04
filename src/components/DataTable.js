@@ -2,6 +2,13 @@ import React from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Row, Col, Table } from 'react-bootstrap';
 import { useMainContext } from '../providers/MainProvider'
+import round from 'lodash/round'
+import { formatAsPercent } from '../utils/helpers'
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
+
+const numberFormatter = (cell, row, rowIndex, formatExtraData) => {
+    return cell ? cell.toLocaleString() : null
+}
 
 let columns = [
     // {
@@ -10,16 +17,33 @@ let columns = [
     // },
     {
         dataField: "state",
-        text: "State",
-        sort: true
+        text: "State"
     },
     {
         dataField: "positive",
-        text: "Positive"
+        text: "Positive",
+        formatter: numberFormatter,
+        classes: 'text-right'
     },
     {
         dataField: "negative",
-        text: "Negative"
+        text: "Negative",
+        formatter: numberFormatter,
+        classes: 'text-right'
+    },
+    {
+        dataField: 'pending',
+        text: 'Pending',
+        formatter: numberFormatter,
+        classes: 'text-right'
+    },
+    {
+        dataField: 'positiveRate',
+        text: '% Positive',
+        formatter: (cell, row, rowIndex, formatExtraData) => {
+            return cell ? formatAsPercent(cell, 2) : null
+        },
+        classes: 'text-right'
     },
     // {
     //     dataField: "negativeScore",
@@ -43,56 +67,52 @@ let columns = [
     // },
     {
         dataField: "totalTestResults",
-        text: "Total Test Results"
+        text: "Total Test Results",
+        formatter: numberFormatter,
+        classes: 'text-right'
     },
     {
         dataField: "hospitalized",
-        text: "Hospitalized"
+        text: "Hospitalized",
+        formatter: numberFormatter,
+        classes: 'text-right'
     },
     {
         dataField: "death",
-        text: "Death"
+        text: "Death",
+        formatter: numberFormatter,
+        classes: 'text-right'
     },
     {
         dataField: "population",
-        text: "Population"
-    },
-    {
-        dataField: "density",
-        text: "Density"
-    },
-    {
-        dataField: "dateModified",
-        text: "Date Modified"
-    },
-    {
-        dataField: "dateChecked",
-        text: "Date Checked"
-    },
-    {
-        dataField: 'totalResultsPlusPending',
-        text: 'Total Results Plus Pending'
-    },
-    {
-        dataField: 'pending',
-        text: 'Pending'
-    },
-    {
-        dataField: 'positiveRate',
-        text: '% Positive'
+        text: "Population",
+        formatter: (cell, row, rowIndex, formatExtraData) => {
+            return numberFormatter(parseInt(cell))
+        },
+        classes: 'text-right'
     }
-
 ]
 
-columns = columns.map(column => ({ ...column, headerClasses: 'sticky' }))
+const defaultSorted = [{
+    dataField: 'name',
+    order: 'desc'
+}]
+
+columns = columns.map(column => ({ ...column, headerClasses: 'sticky', sort: true }))
 
 const DataTable = () => {
-    const { activeDayStateData  } = useMainContext()
+    const { activeDayStateData } = useMainContext()
 
     return (
-        <Row style={{ marginTop: '15px' }}>
+        <Row className='mt-3'>
             <Col>
-                <BootstrapTable keyField='name' data={activeDayStateData} columns={columns} />
+                <BootstrapTable
+                    bootstrap4
+                    keyField='name'
+                    data={activeDayStateData}
+                    columns={columns}
+                    defaultSorted={defaultSorted}
+                />
                 <Table striped bordered responsive >
                 </Table>
             </Col>

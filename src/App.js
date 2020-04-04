@@ -1,25 +1,11 @@
 import React from 'react';
 import './App.css';
-import { Container, Navbar, Jumbotron } from 'react-bootstrap';
+import { Container, Navbar } from 'react-bootstrap';
 import { useMainContext } from './providers/MainProvider'
 import { standardColors } from './constants'
-import SocialShareButtons from './components/SocialShareButtons'
-import ResponsiveDataViewer from './components/ResponsiveDataViewer'
-import Charts from './components/Charts'
-
-const MainPageJumboTron = () => (
-  <Container>
-    <Jumbotron>
-      <p className="lead"><strong>Welcome to COVID Stats U.S.</strong></p>
-      <p className="lead">This project started out as my own attempt to understand what the COVID situation looked like in the U.S. and rapidly grew into a tool that I hope you will find useful. This is a work in progress so stay-tuned for updates.</p>
-      <p className="lead">The charts represent the latest data available thanks to the hard work of the folks at <a href="http://www.covidtracking.com/">covidtracking.com</a>. If anything looks off, make sure to check their <a href="https://covidtracking.com/data/"> notes for that state</a>.</p>
-      <p className="lead">Clicking on the data for any state will highlight that state in all graphs.</p>
-      <p className="lead">If you have questions or comments <a href="https://twitter.com/TylerMorganMe"> feel free to reach out</a>.</p>
-      <p className="lead">Enjoy and please share!</p>
-      <SocialShareButtons />
-    </Jumbotron>
-  </Container>
-)
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import HomePage from './pages/Home'
+import StateExplorerPage from './pages/StateExplorer'
 
 const Header = () => {
   return (
@@ -28,7 +14,7 @@ const Header = () => {
         <Navbar bg="dark" expand="lg">
           <Navbar.Brand href="#home" style={{ color: "white", fontFamily: 'Open Sans, sans-serif', fontSize: '25px' }}>
             COVID STATS <span style={{ color: standardColors[0] }}>U</span>.<span style={{ color: standardColors[1] }}>S</span>.
-              </Navbar.Brand>
+          </Navbar.Brand>
         </Navbar>
       </Container>
     </header>
@@ -41,23 +27,26 @@ const App = () => {
   if (totalsError || dailyDataError || dailyDataError) {
     return (
       <>
-        <p>{JSON.stringify(totalsError)}</p>
-        <p>{JSON.stringify(statesInfoError)}</p>
-        <p>{JSON.stringify(dailyDataError)}</p>
+        {JSON.stringify(totalsError) ? <p>{JSON.stringify(totalsError)}</p> : null } 
+        {JSON.stringify(statesInfoError) ? <p>{JSON.stringify(statesInfoError)}</p> : null } 
+        {JSON.stringify(dailyDataError) ? <p>{JSON.stringify(dailyDataError)}</p> : null } 
       </>
     )
   };
 
-return (
-  <>
-    <Header />
-    <main>
-      <MainPageJumboTron />
-      <Charts />
-      <ResponsiveDataViewer />
-    </main>
-  </>
-);
+  return (
+    <Router>
+      <Header />
+      <Switch>
+        <Route path="/state-explorer">
+          <StateExplorerPage />
+        </Route>
+        <Route path="/">
+          <HomePage />
+        </Route>
+      </Switch>
+    </Router>
+  );
 }
 
 export default App;

@@ -1,7 +1,7 @@
 import React from 'react'
 import StackedBarChart from '../StackedBarChart'
 import { useMainContext } from '../../providers/MainProvider'
-import _ from 'lodash'
+import { formatAsPercent } from '../../utils/helpers'
 
 const RateChart = ({ data }) => {
     const { activeDayStateData  } = useMainContext()
@@ -16,7 +16,7 @@ const RateChart = ({ data }) => {
           { key: 'positiveRate', name: 'Positive' },
           { key: 'negativeRate', name: 'Negative' }
         ]}
-        xTickFormatter={tick => `${_.round(tick * 100, 1)}%`}
+        yTickFormatter={formatAsPercent}
         notes='States with 100% positive rates in the past were primarily due to under-reporting negatives and limited testing (e.g. Hawaii had only reported 10 test as of 3/17 and all were positive).'
       />
     )

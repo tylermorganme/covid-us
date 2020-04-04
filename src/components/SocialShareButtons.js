@@ -29,42 +29,42 @@ const SocialShareButtons = () => {
 
     return (
         <Row>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <FacebookShareButton url={url} quote={summaryText}>
                     <FacebookIcon size={32} round />
                 </FacebookShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <TwitterShareButton url={url} title={summaryText} via="tylermorganme">
                     <TwitterIcon size={32} round />
                 </TwitterShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <RedditShareButton url={url} title={summaryText}>
                     <RedditIcon size={32} round />
                 </RedditShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <PocketShareButton url={url} title={summaryText}>
                     <PocketIcon size={32} round />
                 </PocketShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <PinterestShareButton url={url} description={summaryText}>
                     <PinterestIcon size={32} round />
                 </PinterestShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <EmailShareButton url={url} subject={summaryText} body="I thought you might be intersted in looking at this data.">
                     <EmailIcon size={32} round />
                 </EmailShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <WhatsappShareButton url={url} title={summaryText}>
                     <WhatsappIcon size={32} round />
                 </WhatsappShareButton>
             </Col>
-            <Col style={{ flexGrow: 0, paddingTop: "15px" }}>
+            <Col className='social-button-column'>
                 <LinkedinShareButton url={url} summary={summaryText} source="COVID Stats U.S.">
                     <LinkedinIcon size={32} round />
                 </LinkedinShareButton>

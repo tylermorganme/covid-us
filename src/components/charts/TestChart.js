@@ -23,7 +23,7 @@ const TestChart = ({ data }) => {
           { key: 'negative', name: 'Negative' },
           { key: 'pending', name: 'Pending' }
         ]}
-        xTickFormatter={(tick) => `${tick.toLocaleString()}`}
+        yTickFormatter={(tick) => tick.toLocaleString()}
         max={superCeil(max)}
       />
     )

@@ -106,7 +106,7 @@ const SliderArea = () => {
                     <h2 className='lead'>Change the Date</h2>
                 </Col>
                 <Col xs={'auto'} className="d-none d-lg-block">
-                    <i className="cil-chevron-right" style={{fontSize:'30px'}} />
+                    <i className="cil-chevron-right slider-arrow-icon"/>
                 </Col>
                 <Col xs={12} lg={9}>
                     <DateSlider />
@@ -117,7 +117,7 @@ const SliderArea = () => {
 }
 
 
-const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, notes, max }) => {
+const StackedBarChart = ({ data, seriesList, yTickFormatter, sortBy, title, id, notes, max }) => {
     const windowWidth = useWindowWidth()
     const { activeState, setActiveState } = useMainContext()
     const onClick = (data) => {
@@ -125,7 +125,7 @@ const StackedBarChart = ({ data, seriesList, xTickFormatter, sortBy, title, id, 
     }
 
     const xDefaultTickFormatter = tick => (tick)
-    const formatter = xTickFormatter ? xTickFormatter : xDefaultTickFormatter
+    const formatter = yTickFormatter ? yTickFormatter : xDefaultTickFormatter
     const horizontalHeight = Math.min(windowWidth, 600)
     const verticalHeight = 800
 
